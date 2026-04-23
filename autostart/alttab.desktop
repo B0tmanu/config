@@ -1,0 +1,13 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=0.9.4
+Type=Application
+Name=alttab
+Comment=alttab
+Exec=alttab -fg "#ffffff" -bg "#4a4a4a" -frame "#3b4252" -t 128x150 -i 127x64 -w 1 -d 1
+OnlyShowIn=XFCE;
+RunHook=0
+StartupNotify=false
+Terminal=false
+Hidden=false
+
