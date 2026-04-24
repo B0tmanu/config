@@ -1,32 +1,13 @@
 #!/bin/bash
 
-THEME="minimal"
-
 # Kill existing polybar instances only if running
 if pgrep -u $UID -x polybar >/dev/null 2>&1; then
     killall polybar
     while pgrep -u $UID -x polybar >/dev/null; do sleep 0.2; done
 fi
 
-# Determine config path: prefer ~/.config/polybar (installed), fallback to repo location
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-if [ -f "$HOME/.config/polybar/themes/$THEME/config.ini" ]; then
-    CONFIG_DIR="$HOME/.config/polybar"
-elif [ -f "$SCRIPT_DIR/themes/$THEME/config.ini" ]; then
-    CONFIG_DIR="$SCRIPT_DIR"
-else
-    CONFIG_DIR="$HOME/.config/polybar"
-fi
+CONFIG_FILE="$HOME/.config/polybar/config.ini"
 
-CONFIG_FILE="$CONFIG_DIR/themes/$THEME/config.ini"
-LAPTOP_CONFIG_FILE="$CONFIG_DIR/themes/$THEME/laptop-config.ini"
-
-if command ls /sys/class/power_supply/ 2>/dev/null | command grep -q '^BAT'; then
-	CONFIG_FILE=$LAPTOP_CONFIG_FILE
-	# Detect battery and adapter names for polybar battery module
-	export DWM_BATTERY=$(command ls /sys/class/power_supply/ 2>/dev/null | command grep -E '^BAT[0-9]' | head -1)
-	export DWM_ADAPTER=$(command ls /sys/class/power_supply/ 2>/dev/null | command grep -Ev '^BAT' | head -1)
-fi
 
 # Check if xrandr is available and get monitor list
 if command -v xrandr > /dev/null 2>&1; then
@@ -74,8 +55,6 @@ else
     polybar main -c "$CONFIG_FILE" &
 fi
 
-# Wait for Polybar to be ready before returning.
-# This ensures tray apps started after this script can find the tray owner.
 for i in $(seq 1 30); do
     if xdotool search --class Polybar >/dev/null 2>&1; then
         break
